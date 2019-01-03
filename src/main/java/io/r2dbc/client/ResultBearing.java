@@ -20,6 +20,8 @@ import io.r2dbc.client.util.Assert;
 import io.r2dbc.spi.Result;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import io.reactivex.Flowable;
+
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
@@ -42,7 +44,7 @@ public interface ResultBearing {
      * @see #mapRow(Function)
      * @see #mapRow(BiFunction)
      */
-    <T> Flux<T> mapResult(Function<Result, ? extends Publisher<? extends T>> f);
+    <T> Flowable<T> mapResult(Function<Result, ? extends Publisher<? extends T>> f);
 
     /**
      * Transforms each {@link Row} and {@link RowMetadata} pair into an object.
@@ -52,7 +54,7 @@ public interface ResultBearing {
      * @return the values resulting from the {@link Row} and {@link RowMetadata} transformation
      * @throws IllegalArgumentException if {@code f} is {@code null}
      */
-    default <T> Flux<T> mapRow(BiFunction<Row, RowMetadata, ? extends T> f) {
+    default <T> Flowable<T> mapRow(BiFunction<Row, RowMetadata, ? extends T> f) {
         Assert.requireNonNull(f, "f must not be null");
 
         return mapResult(result -> result.map(f));
@@ -66,7 +68,7 @@ public interface ResultBearing {
      * @return the values resulting from the {@link Row} transformation
      * @throws IllegalArgumentException if {@code f} is {@code null}
      */
-    default <T> Flux<T> mapRow(Function<Row, ? extends T> f) {
+    default <T> Flowable<T> mapRow(Function<Row, ? extends T> f) {
         Assert.requireNonNull(f, "f must not be null");
 
         return mapRow((row, rowMetadata) -> f.apply(row));

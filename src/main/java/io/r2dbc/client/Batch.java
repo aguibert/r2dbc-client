@@ -18,10 +18,10 @@ package io.r2dbc.client;
 
 import io.r2dbc.client.util.Assert;
 import io.r2dbc.spi.Result;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
+import io.reactivex.Flowable;
 
-import java.util.Objects;
+import org.reactivestreams.Publisher;
+
 import java.util.function.Function;
 
 /**
@@ -49,10 +49,10 @@ public final class Batch implements ResultBearing {
         return this;
     }
 
-    public <T> Flux<T> mapResult(Function<Result, ? extends Publisher<? extends T>> f) {
+    public <T> Flowable<T> mapResult(Function<Result, ? extends Publisher<? extends T>> f) {
         Assert.requireNonNull(f, "f must not be null");
 
-        return Flux.from(this.batch.execute())
+        return Flowable.fromPublisher(this.batch.execute())
             .flatMap(f::apply);
     }
 

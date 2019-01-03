@@ -19,6 +19,8 @@ package io.r2dbc.client;
 import io.r2dbc.client.util.Assert;
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.IsolationLevel;
+import io.reactivex.Flowable;
+
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -124,7 +126,7 @@ public final class Handle {
      * @return the number of rows that were updated
      * @throws IllegalArgumentException if {@code sql} or {@code parameters} is {@code null}
      */
-    public Flux<Integer> execute(String sql, Object... parameters) {
+    public Flowable<Integer> execute(String sql, Object... parameters) {
         Assert.requireNonNull(sql, "sql must not be null");
         Assert.requireNonNull(parameters, "parameters must not be null");
 
@@ -147,7 +149,7 @@ public final class Handle {
      * @see Connection#rollbackTransaction()
      */
     @SuppressWarnings("unchecked")
-    public <T> Flux<T> inTransaction(Function<Handle, ? extends Publisher<? extends T>> f) {
+    public <T> Flowable<T> inTransaction(Function<Handle, ? extends Publisher<? extends T>> f) {
         Assert.requireNonNull(f, "f must not be null");
 
         return Mono.from(
@@ -170,7 +172,7 @@ public final class Handle {
      * @see Connection#rollbackTransaction()
      */
     @SuppressWarnings("unchecked")
-    public <T> Flux<T> inTransaction(IsolationLevel isolationLevel, Function<Handle, ? extends Publisher<? extends T>> f) {
+    public <T> Flowable<T> inTransaction(IsolationLevel isolationLevel, Function<Handle, ? extends Publisher<? extends T>> f) {
         Assert.requireNonNull(isolationLevel, "isolationLevel must not be null");
         Assert.requireNonNull(f, "f must not be null");
 
